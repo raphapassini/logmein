@@ -100,7 +100,7 @@ $ python manage.py syncdb
 $ python manage.py migrate --all
 ```
 
-* Finish! Now you can run **logmein_adm** and start to insert your projects
+* Finish! Now you can run **logmein_adm** and start to insert your projects.  
   If you're intent to use the **logmein_adm** locally you can start the server by typing
 ```
 $ python manage.py runserver
