@@ -2,7 +2,7 @@ Logmein
 =======
 
 A remote login system for django. Control your "root" user in several projects in a single place, you can login with just 1 click.
-  
+
 You have to manage your "root" login over several projects? The aim of this project is provide a simple interface where you can centralize all your projects and connect with just one click.
 
 Installing the client
@@ -15,16 +15,25 @@ $ git clone https://github.com/raphapassini/logmein.git
 $ cd logmein/
 ```
 
-* Move the ```logmein_app``` foder to the project we want to remotely connect.  
-  For example purposes we gonna call this project **django_project**
+* Active your project [virtualenv](https://pypi.python.org/pypi/virtualenv), for example purposes i'll use ```django_project```
+  I'm also considering that you're using [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/)
 
 ```
-$ cp logmein_app /path/to_my/django_project/
+$ workon django_project
+$ cd /path/to/django_project
+```
+
+* Install **logmein_app** inside your project virtualenv
+
+```
+$ pip install logmein_app
 ```
 
 * Inside the **django_project** alter the ```urls.py```
 
 ```
+import logmein_app
+
 urlpatterns = patterns(
     '',
     [...suppressed code]
@@ -51,7 +60,7 @@ Installing the Logmein Admin
 
 ```
 $ cd /path/to/logmein/folder/logmein_adm/
-$ pip install -Mr requirements.txt 
+$ pip install -Mr requirements.txt
 ```
 
 * Configure production settings in ```project/prod_settings.py```
