@@ -1,7 +1,8 @@
-logmein
+Logmein
 =======
 
 A remote login system for django. Control your "root" user in several projects in a single place, you can login with just 1 click.
+  
 You have to manage your "root" login over several projects? The aim of this project is provide a simple interface where you can centralize all your projects and connect with just one click.
 
 Installing the client
