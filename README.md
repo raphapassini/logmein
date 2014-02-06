@@ -97,6 +97,14 @@ $ python manage.py migrate --all
 $ python manage.py runserver
 ```
 
-** IMPORTANT NOTES **
+IMPORTANT NOTES
+-------------------
+
 * You'll need the secret off every remote client you want to connect to, the secret is stored in ```SECRET_KEY``` inside   the ```settings.py```
 
+TOOD
+----
+
+* Write tests to logmein_adm
+* Think a better way to validate the token ( the token should be valid at max for 30secs )
+* Any suggestion? Mail me at raphapassini [at] gmail [dot] com
