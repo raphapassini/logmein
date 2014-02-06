@@ -4,6 +4,6 @@
 from django.conf.urls import patterns, url
 
 urlpatterns = patterns(
-    'logmein.views',
+    'logmein_app.views',
     url(r'^login/$', "logmein_login", name="logmein_login"),
 )

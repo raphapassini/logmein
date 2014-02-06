@@ -4,7 +4,7 @@ import time
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client
-from logmein.views import LogmeinBackend
+from .views import LogmeinBackend
 
 
 class LogmeinTest(unittest.TestCase):
