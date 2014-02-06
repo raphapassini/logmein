@@ -15,7 +15,7 @@ $ git clone https://github.com/raphapassini/logmein.git
 $ cd logmein/
 ```
 
-* Active your project [virtualenv](https://pypi.python.org/pypi/virtualenv), for example purposes i'll use ```django_project```
+* Active your project [virtualenv](https://pypi.python.org/pypi/virtualenv), for example purposes i'll use ```django_project```.  
   I'm also considering that you're using [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/)
 
 ```
