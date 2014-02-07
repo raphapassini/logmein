@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import Client
 from .views import LogmeinBackend
+from .security import EncodeAES
 
 
 class LogmeinTest(unittest.TestCase):
@@ -13,6 +14,7 @@ class LogmeinTest(unittest.TestCase):
     def setUpClass(cls):
         cls.logmein_backend = LogmeinBackend()
         cls.client = Client()
+        cls.username = EncodeAES('root')
         User.objects.all().delete()
         User.objects.create_superuser('root', u'r@r.com', '1234', pk=100)
 
@@ -24,12 +26,16 @@ class LogmeinTest(unittest.TestCase):
     def test_can_login(self):
         """Can login with a valid token"""
         token = self.get_token()
-        self.assertTrue(self.logmein_backend.authenticate(token=token))
+        self.assertTrue(
+            self.logmein_backend.authenticate(username=self.username,
+                                              token=token))
 
     def test_cant_login_with_random_token(self):
         """Cant login with a random token"""
         token = '9207a1b6b91614e110b606fa6096ace4c22dd83e743f6c600ce0a1d5'
-        self.assertFalse(self.logmein_backend.authenticate(token=token))
+        self.assertFalse(
+            self.logmein_backend.authenticate(username=self.username,
+                                              token=token))
 
     def test_cant_login_with_expired_token(self):
         """Cant login with a expired token"""
@@ -47,17 +53,31 @@ class LogmeinTest(unittest.TestCase):
 
     def test_user_should_be_loged_when_token_is_valid(self):
         """User should be loged if token is valid"""
-        token_param = '?token=%s' % (self.get_token(), )
-        login_url = ''.join([reverse('logmein_login'), token_param])
-        response = self.client.get(login_url)
-        self.assertTrue(response.cookies.get('sessionid'))
+        url_params = '?token=%s&username=%s' % (self.get_token(),
+                                                self.username)
+        login_url = ''.join([reverse('logmein_login'), url_params])
+        self.client.get(login_url)
+        self.assertTrue(self.client.session.get('_auth_user_id'))
 
     def test_user_shouldnt_be_loged_when_token_is_invalid(self):
         """User shouldnt be loged if token is invalid"""
-        token_param = '?token=%s' % ('AISHCAIUHCUASICuihiuihiuhuihi98989', )
+        username = EncodeAES('john_doe')
+        token_param = '?token=%s&username=%s' %\
+            ('AISHCAIUHCUASICuihiuihiuhuihi98989', username)
         login_url = ''.join([reverse('logmein_login'), token_param])
+        self.client.logout()
+        self.client.get(login_url)
+        self.assertFalse(self.client.session.get('_auth_user_id'))
+
+    def test_user_shouldnt_be_loged_when_username_doesnt_exist(self):
+        """User shouldnt be loged if username doesnt exist"""
+        username = EncodeAES('john_doe')
+        url_params = '?token=%s&username=%s' % (self.get_token(),
+                                                username)
+        login_url = ''.join([reverse('logmein_login'), url_params])
+        self.client.logout()
         response = self.client.get(login_url)
-        self.assertFalse(response.cookies.get('sessionid'))
+        self.assertTrue(response.status_code == 403)
 
     def test_backend_should_return_user_given_a_pk(self):
         """Backend should return user given a pk"""

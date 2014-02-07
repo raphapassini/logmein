@@ -3,11 +3,12 @@ import hashlib
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.http import HttpResponseForbidden
 from django.conf import settings
+from .security import DecodeAES
 
 
 class LogmeinBackend(object):
-    root_username = 'root'
 
     def check_token(self, user_token, limit_seconds=30):
         second = datetime.datetime.now().second
@@ -28,13 +29,11 @@ class LogmeinBackend(object):
         token = hashlib.sha224(token_str).hexdigest()
         return token
 
-    def authenticate(self, token=None):
+    def authenticate(self, username, token):
+        username = DecodeAES(username)
         user = None
         if self.check_token(user_token=token):
-            try:
-                user = User.objects.get(username=self.root_username)
-            except User.DoesNotExist:
-                pass
+            user = User.objects.get(username=username)
         return user
 
     def get_user(self, user_id):
@@ -45,11 +44,16 @@ class LogmeinBackend(object):
 
 
 def logmein_login(request):
-    print datetime.datetime.utcnow()
-    if request.GET.get('gen') and DEBUG:
+    if request.GET.get('gen') and settings.DEBUG:
         print LogmeinBackend().get_token()
 
-    user = authenticate(token=request.GET.get('token'))
+    username = request.GET.get('username')
+    token = request.GET.get('token')
+    try:
+        user = authenticate(username=username, token=token)
+    except User.DoesNotExist:
+        return HttpResponseForbidden('Invalid username')
+
     if user is not None:
         login(request, user)
     return redirect('admin:index')
